@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -14,9 +15,11 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     
     private bool m_Started = false;
-    private int m_Points;
+    public int m_Points;
     
     private bool m_GameOver = false;
+
+    [SerializeField] TextMeshProUGUI TopScoreText;
 
     
     // Start is called before the first frame update
@@ -24,7 +27,8 @@ public class MainManager : MonoBehaviour
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+        TopScoreText.SetText("Best Score : " + DataManager.Instance.hiPlayerName + " : " + DataManager.Instance.hiScore);
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -72,5 +76,20 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        
+        if (m_Points > DataManager.Instance.hiScore)
+        {
+            DataManager.Instance.playerName = DataManager.Instance.currentName;
+            DataManager.Instance.highScore = m_Points;
+            DataManager.Instance.hiScore = DataManager.Instance.highScore;
+            DataManager.Instance.hiPlayerName = DataManager.Instance.playerName;
+        } else
+        {
+            DataManager.Instance.highScore = DataManager.Instance.hiScore;
+            DataManager.Instance.playerName = DataManager.Instance.hiPlayerName;
+        }
+        DataManager.Instance.SaveLeaderboardData();
+        TopScoreText.SetText("Best Score : " + DataManager.Instance.hiPlayerName + " : " + DataManager.Instance.hiScore);
+        Debug.Log("High Score : " + DataManager.Instance.playerName + " : " + DataManager.Instance.highScore);
     }
 }
